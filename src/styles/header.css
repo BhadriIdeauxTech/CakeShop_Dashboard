@@ -1,0 +1,201 @@
+.input-group-text {
+    padding: 3px 20px !important;
+    background-color: white;
+
+}
+
+.input-group {
+    border-radius: 20px;
+}
+
+.form-control {
+    background: transparent;
+    border: none;
+}
+
+.form-control:focus {
+    color: var(--bs-body-color);
+    background: transparent;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+}
+
+.header {
+    background-color: white;
+    margin-bottom: 10px;
+}
+
+.notificationIconCont {
+    margin-left: 20px;
+    background-color: #f3f0ff;
+    padding: 8px;
+    border-radius: 5px;
+    width: fit-content;
+}
+
+.notificationIconCont svg path {
+
+    color: var(--secondary-clr);
+    width: 100px !important;
+}
+
+.logoCont {
+    position:sticky;
+    top: 0px;
+    z-index: 100;
+    background-color: white;
+    padding-bottom: 10px !important;
+}
+.headerTopSec {
+    width: 100%;
+    position: sticky;
+    top: 0px;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    padding: 10px 40px;
+}
+
+.searchBardCont {
+    width: 680px;
+}
+
+.userContentTop {
+    display: flex;
+
+}
+
+.userdet p {
+    font-size: 14x;
+
+    color: green;
+}
+
+.logOut {
+    border: none;
+    background-color: red;
+    color: white;
+    padding: 10px;
+    border-radius: 100%;
+
+}
+
+
+.logOutBtnCont a {
+    color: red;
+    font-weight: 500;
+    
+}
+
+:where(.css-dev-only-do-not-override-5wsri9).ant-menu-light .ant-menu-item-selected,
+:where(.css-dev-only-do-not-override-5wsri9).ant-menu-light>.ant-menu .ant-menu-item-selected {
+    background-color: #5537FF;
+    color: white;
+}
+
+:where(.css-dev-only-do-not-override-5wsri9).ant-layout-sider {
+    position: relative;
+    min-width: 0;
+    background: #ffffff;
+
+}
+
+.headerTopSec h3 {
+    text-align: center !important;
+    color: #151D48;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+:where(.css-dev-only-do-not-override-5wsri9).ant-layout-sider .ant-layout-sider-trigger {
+    color: #000000;
+    background-color: rgb(245 245 245);
+    font-size: 20px;
+    font-weight: 900;
+}x
+.headerTopSec .form-control {
+    background-color: transparent !important;
+
+    border: none !important;
+}
+
+tr .form-select {
+    border: none !important;
+
+}
+
+.input-group-sm .form-control{
+    border: none !important;
+}
+
+
+.loginSection .form-control {
+    border: none !important;
+    outline: none !important;
+    background-color: transparent;
+}
+
+.loginSection .form-control:focus {
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.headerTopSec {
+    box-shadow: 4.5px -3.5px 10px #c9c9c9;
+}
+
+h3 span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateX(-30px);
+
+    animation: slideIn 0.5s forwards, SlideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+}
+h3 span:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+h3 span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+h3 span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+h3 span:nth-child(4) {
+    animation-delay: 0.4s;
+}
+.hide {
+    animation: slideIn 0.5s forwards;
+    animation-fill-mode: both;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+}

@@ -1,0 +1,80 @@
+.form-control {
+
+    border-radius: 0px 8px 8px 0px !important;
+
+    background-color: white;
+
+}
+
+.input-group-text {
+    border-radius: 20px 0px 0px 20px !important;
+    background-color: white !important;
+    border: none !important;
+    color: var(--primary-clr) !important;
+
+}
+
+.input-group {
+    border: none;
+    border: 1px solid var(--primary-clr);
+    border-radius: 8px;
+    outline: none;
+    width: 100%;
+}
+
+
+.form-control {
+    font-size: 10px;
+
+}
+
+.form-control:focus {
+    box-shadow: none !important;
+}
+
+small {
+    font-size: 12px;
+}
+
+.forgotPwd {
+    color: var(--primary-clr);
+    font-weight: 500;
+
+}
+
+.input-group-text {
+
+    background: none !important;
+
+}
+
+
+.btn-primary {
+    text-align: end;
+    background-color: var(--primary-clr) !important;
+}
+
+
+.form-control,
+.form-select {
+    border: 1px solid #151D48 !important;
+    border-radius: 5px !important;
+}
+
+.form-select:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: none !important;
+}
+
+td .form-select {
+    border: none !important;
+
+}
+
+.addTypeForm .form-conteol {
+    border: none !important;
+}
+.addTypeForm .form-conteol {
+    border: none !important;
+}

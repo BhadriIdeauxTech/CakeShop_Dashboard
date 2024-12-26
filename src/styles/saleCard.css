@@ -1,0 +1,75 @@
+
+.salesCardMain{
+    display: flex;
+    justify-content: space-evenly;
+
+}
+
+.saleCard{
+    border-radius: 20px;
+    padding: 20px;
+    background-color: #FFE2E5;
+    transition: 1s;
+}
+
+
+.saleCard:hover{
+    transform: translateY(-10px);
+
+  }
+
+.saleCard.orange{
+
+    background-color: #FFF4DE;
+}
+.saleCard.orange .salesIcon {
+
+    background-color: #FF947A;
+}
+.saleCard.green{
+
+    background-color: #DCFCE7;
+}
+.saleCard.green .salesIcon {
+
+    background-color: #3CD856;
+}
+.saleCard.purple{
+
+    background-color: #F3E8FF;
+}
+.saleCard.purple .salesIcon {
+
+    background-color: #A34CFF;
+}
+.salesIcon{
+    background-color: #f93660 ;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.salesIcon svg{
+    font-size: 25px;
+    color: white;
+}
+
+.totalAmount{
+    color: #151D48;
+    font-size: 25px;
+    font-weight: 600;
+}
+.totolSaleText{
+color: grey;
+}
+.percentageSale{
+    color: blue;
+}
+.salesCardMain h5{
+    color: #151D48;
+    font-size: 20px;
+    font-weight: 600;
+}

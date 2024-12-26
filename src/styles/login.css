@@ -1,0 +1,72 @@
+.loginSection {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginSection h1 {
+  color: var(--secondary-clr);
+  font-family: "Barlow", system-ui;
+  font-weight: 700;
+
+}
+
+.formContainer {
+  padding: 40px;
+  width: fit-content;
+  border-radius: 20px;
+  box-shadow: 0 4px 30px rgb(210 205 255);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+
+ .loginSection .form-conteol{
+  border: none !important;
+  background-color: transparent;
+}
+.loginSection .form-control:focus{
+  border: none !important;
+  background-color: transparent !important;
+} 
+
+.loginBtn {
+  background-color: var(--primary-clr);
+  color: var(--light-white);
+  border: none;
+  padding: 6px 40px;
+  border-radius: 8px;
+  font-weight: 700;
+  width: 100%;
+}
+
+
+
+.loginSecImg {
+  animation: loginImageAnimation;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes loginImageAnimation {
+  from {
+    transform: translateY(0px);
+  }
+
+  to {
+    transform: translateY(-20px);
+  }
+
+
+}
+
+@media only screen and (max-width:768px) {
+  .loginSecImg {
+    width: 70%;
+  }
+}
+

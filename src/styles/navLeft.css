@@ -1,0 +1,10 @@
+
+.logoCont img {
+  width: 80%;
+  transition: width 0.3s;
+  
+}
+
+.sider-collapsed .logoCont img {
+  width: 100% !important; 
+}
