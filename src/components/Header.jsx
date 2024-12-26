@@ -27,7 +27,7 @@ const Header = () => {
 
   return (
     <div className='headerTopSec'>
-      <h3 className='me-4 text-'>{currentTitle}</h3>
+      {/* <h3 className='me-4 text-'>{currentTitle}</h3> */}
       <div className="searchBardCont d-flex">
         <div className="input-group input-group-sm ">
           <span className="input-group-text" id="inputGroup-sizing-sm">
@@ -59,15 +59,15 @@ const Header = () => {
           <p className='mb-0'>{user.role || 'User'}</p>
         </div>
       </div>
-      <div className='logOutBtnCont'>
-        <Link to="/logout" className={({ isActive }) => (isActive ? 'active-link' : '')} >
+      <div className='logOutBtnCont '>
+        <Link to="/logout" className={({ isActive }) => (isActive ? 'active-link d-flex' : ' d-flex')} >
           <button className="logOut">
             <span className='ms-1'>
               <FiLogOut />
             </span>
           </button>
-          <br />
-          Log Out
+          {/* <br /> */}
+          {/* Log Out */}
         </Link>
       </div>
     </div>

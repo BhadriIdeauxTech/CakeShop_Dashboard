@@ -3,13 +3,13 @@ import {  Layout, Menu, theme } from 'antd';
 import { NavLink, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './components/Auth/AuthContext';
 import Dashboard from './components/dashboard/Dashboard.jsx';
-import AddProduct from './components/AddProduct';
+import AddProduct from './components/addItems/AddProduct';
 import Report from './components/Reports';
 import ReturnItems from './components/ReturnItems';
 import RemoveItemTable from './components/RemoveItems.jsx';
-import AddCategory from './components/AddCategory.jsx';
-import AddSubType from './components/AddSubType.jsx';
-import AddType from './components/AddType.jsx';
+import AddCategory from './components/addItems/AddCategory.jsx';
+import AddSubCategory from './components/addItems/AddSubCategory.jsx';
+
 import Sales from './components/Sales';
 import Login from './components/Login';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
@@ -28,7 +28,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import {TbReportAnalytics } from "react-icons/tb";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { RiAddBoxFill } from "react-icons/ri";
-
+import Billing from './components/Billing.jsx'
 const { Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -63,25 +63,19 @@ const items = [
       '3',
       <IoMdAddCircleOutline />
     ),
-    getItem(
-      <NavLink to="/add-type" className={({ isActive }) => (isActive ? 'active-link' : '')}>
-        Add Type
-      </NavLink>,
-      '4',
-      <IoMdAddCircleOutline />
-    ),
+
     getItem(
       <NavLink to="/add-subtype" className={({ isActive }) => (isActive ? 'active-link' : '')}>
         Add Sub Type
       </NavLink>,
-      '5',
+      '4',
       <IoMdAddCircleOutline />
     ),
     getItem(
       <NavLink to="/add-product" className={({ isActive }) => (isActive ? 'active-link' : '')}>
         Add Products
       </NavLink>,
-      '6',
+      '5',
       <IoMdAddCircleOutline />
     ),
   ]),
@@ -90,14 +84,14 @@ const items = [
       <NavLink to="/return-items" className={({ isActive }) => (isActive ? 'active-link' : '')}>
         Return Item
       </NavLink>,
-      '7',
+      '6',
       <BiUndo />
     ),
     getItem(
       <NavLink to="/remove-items" className={({ isActive }) => (isActive ? 'active-link' : '')}>
         Remove Items
       </NavLink>,
-      '8',
+      '7',
       <FaTrashAlt />
     ),
   ]),
@@ -105,8 +99,15 @@ const items = [
     <NavLink to="/report" className={({ isActive }) => (isActive ? 'active-link' : '')}>
       Report
     </NavLink>,
-    '9',
+    '8',
     <TbReportAnalytics />
+  ),
+  getItem(
+    <NavLink to="/billing" className={({ isActive }) => (isActive ? 'active-link' : '')}>
+      Billing
+    </NavLink>,
+    '9',
+    <Billing />
   )
 ];
 const App = () => {
@@ -155,7 +156,7 @@ const App = () => {
           {!isLoginPage && <Header />}
           <Content
             style={{
-              margin: '0 16px',
+              margin: '20px',
             }}
           >
             <div
@@ -172,10 +173,11 @@ const App = () => {
                 <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
                 <Route path="/report" element={<ProtectedRoute><Report /></ProtectedRoute>} />
                 <Route path="/add-category" element={<ProtectedRoute><AddCategory /></ProtectedRoute>} />
-                <Route path="/add-type" element={<ProtectedRoute><AddType /></ProtectedRoute>} />
-                <Route path="/add-subtype" element={<ProtectedRoute><AddSubType /></ProtectedRoute>} />
+                {/* <Route path="/add-type" element={<ProtectedRoute><AddType /></ProtectedRoute>} /> */}
+                <Route path="/add-subtype" element={<ProtectedRoute><AddSubCategory /></ProtectedRoute>} />
                 <Route path="/return-items" element={<ProtectedRoute><ReturnItems /></ProtectedRoute>} />
                 <Route path="/remove-items" element={<ProtectedRoute><RemoveItemTable /></ProtectedRoute>} />
+                <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
                 <Route path="/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/login" />} />
               </Routes>

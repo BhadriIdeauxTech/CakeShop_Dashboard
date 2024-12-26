@@ -1,4 +1,36 @@
-.barcodeTd svg{
-    width: 300px !important
-    ;
+.barcodeTd svg {
+    width: 300px !important;
+}
+
+.product-dropdown-menu {
+    position: absolute;
+    background-color: #f4f4f4;
+
+}
+
+.product-dropdown-menu li {
+    padding: 5px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.productNameDropMain {
+    position: relative;
+}
+.productNameDropMain button {
+border-radius: 0px 5px 5px 0px !important;
+}
+.productNameDropMain .form-control {
+border-radius: 5px 0px 0px 5px  !important;
+}
+
+.input-group .form-control {
+    border: none !important;
+    border-radius: 8px 0px 0px 8px !important;
+    background-color: transparent !important;
+}
+ 
+.btn-primary{
+    background-color: #5537ff !important;
+    color: white !important;
+    border:1px  #5537ff !important;;
 }
