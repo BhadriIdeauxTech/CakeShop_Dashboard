@@ -1,14 +1,11 @@
 import axios from 'axios';
-
-// Create an Axios instance with default settings
 const apiClient = axios.create({
-    baseURL: 'https://your-backend-endpoint.com/api', // Replace with your actual backend URL
+    baseURL: 'http://192.168.29.120:8086',
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Interceptor to handle errors globally
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -17,6 +14,20 @@ apiClient.interceptors.response.use(
         return Promise.reject(error.response || error.message);
     }
 );
+
+
+
+
+export const deleteRequest = async (url) => {
+    try {
+        const response = await axios.delete(url);
+        return response.data;
+    } catch (error) {
+        throw error; // This will be caught in handleDeleteCategory
+    }
+};
+
+
 
 /**
  * Generic GET request
@@ -28,7 +39,7 @@ export const get = (endpoint, params) =>
 
 /**
  * Generic POST request
- * @param {string} endpoint - The API endpoint
+ * @param {string} endpoint 
  * @param {Object} data - The data to send in the request body
  */
 export const post = (endpoint, data) =>

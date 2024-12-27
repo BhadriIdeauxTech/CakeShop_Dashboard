@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col, FormGroup, Label, Input, Button, FormFeedback } from 'reactstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../styles/addProduct.css';
 import { post } from '../utils/api'; // Import reusable API logic
 import showAlert from '../utils/alerts'; // Import the reusable toast utility
- 
+
+import ProductList from './ProductList';
+
 const AddProduct = () => {
     const [productData, setProductData] = useState({
         productName: '',
@@ -15,29 +17,63 @@ const AddProduct = () => {
         description: '',
         weight: '',
         pieces: '',
-        availableQuantity: ''
+        availableQuantity: '',
+        price: '', // Added price field
+        totalPrice: '' // Added totalPrice field
     });
-    const [productList, setProductList] = useState([
-        'Chocolate Cake',
-        'Vanilla Cake',
-        'Strawberry Pastry',
-        'Chocolate Pastry'
-    ]);
-    const [filteredProducts, setFilteredProducts] = useState([]);
-    const [categories, setCategories] = useState([
-        { id: 'cake', name: 'Cake' },
-        { id: 'pastry', name: 'Pastry' }
-    ]);
-    const [subCategories, setSubCategories] = useState({
-        cake: ['Chocolate Cake', 'Vanilla Cake'],
-        pastry: ['Strawberry Pastry', 'Chocolate Pastry']
-    });
+    const [categories, setCategories] = useState([]); // Will hold the fetched category data
+    const [subCategories, setSubCategories] = useState({}); // Will map categoryId to subcategories
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
+    // Fetch categories and subcategories from the API
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('http://192.168.29.120:8086/category/all');
+                const data = await response.json();
+                setCategories(data); // Set the categories based on the response
+            } catch (error) {
+                toast.error('Error fetching categories');
+            }
+        };
+
+        const fetchSubCategories = async () => {
+            try {
+                const response = await fetch('http://192.168.29.120:8086/subcategory/all');
+                const data = await response.json();
+                const subCategoryMap = {};
+                data.forEach(sub => {
+                    if (!subCategoryMap[sub.categoryId]) {
+                        subCategoryMap[sub.categoryId] = [];
+                    }
+                    subCategoryMap[sub.categoryId].push(sub);
+                });
+                setSubCategories(subCategoryMap); // Set the subcategories mapping by categoryId
+            } catch (error) {
+                toast.error('Error fetching subcategories');
+            }
+        };
+
+        fetchCategories();
+        fetchSubCategories();
+    }, []);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setProductData({ ...productData, [name]: value });
+        setProductData({
+            ...productData,
+            [name]: value.trim() // Trim the value before setting it in the state
+        });
+
+        // Calculate totalPrice whenever price or quantity changes
+        if (name === 'price' || name === 'quantity') {
+            const totalPrice = productData.price * productData.quantity;
+            setProductData(prevState => ({
+                ...prevState,
+                totalPrice
+            }));
+        }
     };
 
     const handleCategoryChange = (e) => {
@@ -49,33 +85,27 @@ const AddProduct = () => {
         setProductData({ ...productData, subCategory: e.target.value });
     };
 
-    const handleSearch = () => {
-        const searchQuery = productData.productName.toLowerCase();
-        const results = productList.filter((product) =>
-            product.toLowerCase().includes(searchQuery)
-        );
-        setFilteredProducts(results);
-    };
-
-    const handleProductSelect = (product) => {
-        setProductData({ ...productData, productName: product });
-        setFilteredProducts([]); // Hide the dropdown list after selection
-    };
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setErrors({}); // Reset errors before validation
     
         let validationErrors = {};
     
+        // Trim the quantity before validating
+        const trimmedQuantity = productData.quantity.trim();
+        const trimmedAvailableQuantity = productData.availableQuantity.trim(); // Ensure availableQuantity is trimmed
+    
         // Perform validation for each field
         if (!productData.productName) validationErrors.productName = 'Product name is required';
         if (!productData.category) validationErrors.category = 'Category is required';
         if (!productData.subCategory) validationErrors.subCategory = 'Subcategory is required';
-        if (!productData.quantity) validationErrors.quantity = 'Quantity is required';
+        if (!trimmedQuantity) validationErrors.quantity = 'Quantity is required';  // Trimmed check
+        if (!trimmedAvailableQuantity) validationErrors.availableQuantity = 'Available quantity is required'; // Validation check for availableQuantity
         if (!productData.description) validationErrors.description = 'Description is required';
         if (!productData.weight) validationErrors.weight = 'Weight is required';
         if (!productData.pieces) validationErrors.pieces = 'Number of pieces is required';
-        if (!productData.availableQuantity) validationErrors.availableQuantity = 'Available quantity is required';
+        if (!productData.price) validationErrors.price = 'Price is required'; // Validation for price
+        if (!productData.totalPrice) validationErrors.totalPrice = 'Total price is required'; // Validation for totalPrice
     
         // If validation errors exist, update the errors state and show an error message
         if (Object.keys(validationErrors).length > 0) {
@@ -84,74 +114,78 @@ const AddProduct = () => {
             return;
         }
     
-        // If no validation errors, proceed with form submission
-        console.log('Product Added:', productData);
+        // Prepare the product data to be sent
+        const productToAdd = {
+            subcategoryId: productData.subCategory, // Subcategory selected
+            categoryId: productData.category, // Category selected
+            productName: productData.productName,
+            price: productData.price, // Convert price to number
+            totalPrice:productData.totalPrice, // Convert totalPrice to number
+            weight: productData.weight, // Convert weight to number
+            pieces:productData.pieces, // Convert pieces to number
+            description: productData.description,
+            quantityAvailable: productData.availableQuantity, // Convert availableQuantity to number
+        };
     
-        // Show success alert using the showAlert function
-        showAlert('success', 'Success', 'Product added successfully!');
+        try {
+            // Send the data to the backend
+            const response = await fetch('http://192.168.29.120:8086/product/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(productToAdd), // Convert the product data to JSON
+            });
     
-        // Reset form fields
-        setProductData({
-            productName: '',
-            category: '',
-            subCategory: '',
-            quantity: '',
-            description: '',
-            weight: '',
-            pieces: '',
-            availableQuantity: ''
-        });
+            const result = await response.json();
     
-        // Clear the filtered product list
-        setFilteredProducts([]);
+            if (response.ok) {
+                // Show success alert
+                showAlert('success', 'Success', 'Product added successfully!');
+    
+                // Reset form fields
+                setProductData({
+                    productName: '',
+                    category: '',
+                    subCategory: '',
+                    quantity: '',
+                    description: '',
+                    weight: '',
+                    pieces: '',
+                    availableQuantity: '',
+                    price: '', // Reset price
+                    totalPrice: '' // Reset totalPrice
+                });
+            } else {
+                // Handle backend error
+                toast.error(result.message || 'Failed to add product');
+            }
+        } catch (error) {
+            // Handle network or other errors
+            toast.error('Error submitting product');
+        }
     };
     
 
     return (
         <div>
             <h5>Add Product</h5>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='mb-3'>
                 <Row className="d-flex justify-content-center">
-                    <Col md={6} className="mb-3">
-                        <div className='productNameDropMain'>
-                            <FormGroup>
-                                <Label for="productName">Product Name</Label>
-                                <div className="d-flex">
-                                    <Input
-                                        placeholder="Search for Product"
-                                        aria-label="Search for Product"
-                                        name="productName"
-                                        value={productData.productName}
-                                        onChange={handleChange}
-                                        invalid={!!errors.productName}  // Trigger invalid feedback if there is an error
-                                    />
-                                    <button className='btn-primary' onClick={handleSearch}>Search</button>
-                                </div>
-
-                                {/* Render filtered product list as dropdown */}
-                                {filteredProducts.length > 0 && (
-                                    <ul className="product-dropdown-menu show p-0 m-0" style={{ width: '100%' }}>
-                                        {filteredProducts.map((product, index) => (
-                                            <li
-                                                key={index}
-                                                className="dropdown-item"
-                                                onClick={() => handleProductSelect(product)}
-                                            >
-                                                {product}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-
-                                {/* Display the error message if there's an error */}
-                                {errors.productName && (
-                                    <FormFeedback className="d-block">
-                                        {errors.productName}
-                                    </FormFeedback>
-                                )}
-                            </FormGroup>
-                        </div>
+                    <Col md={6}>
+                        <FormGroup>
+                            <Label for="productName">Product Name</Label>
+                            <Input
+                                name="productName"
+                                value={productData.productName}
+                                onChange={handleChange}
+                                type="text"
+                                invalid={!!errors.productName}
+                            />
+                            {errors.productName && <FormFeedback>{errors.productName}</FormFeedback>}
+                        </FormGroup>
                     </Col>
+
                     <Col md={6}>
                         <FormGroup>
                             <Label for="category">Category</Label>
@@ -164,14 +198,15 @@ const AddProduct = () => {
                             >
                                 <option value="">Select Category</option>
                                 {categories.map((category) => (
-                                    <option key={category.id} value={category.id}>
-                                        {category.name}
+                                    <option key={category.categoryId} value={category.categoryId}>
+                                        {category.categoryName}
                                     </option>
                                 ))}
                             </Input>
                             {errors.category && <FormFeedback>{errors.category}</FormFeedback>}
                         </FormGroup>
                     </Col>
+
                     <Col md={6}>
                         <FormGroup>
                             <Label for="subCategory">Sub Category</Label>
@@ -184,14 +219,15 @@ const AddProduct = () => {
                             >
                                 <option value="">Select Sub Category</option>
                                 {(subCategories[productData.category] || []).map((subCategory) => (
-                                    <option key={subCategory} value={subCategory}>
-                                        {subCategory}
+                                    <option key={subCategory.subcategoryId} value={subCategory.subcategoryId}>
+                                        {subCategory.subcategoryName}
                                     </option>
                                 ))}
                             </Input>
                             {errors.subCategory && <FormFeedback>{errors.subCategory}</FormFeedback>}
                         </FormGroup>
                     </Col>
+
                     <Col md={6}>
                         <FormGroup>
                             <Label for="weight">Weight</Label>
@@ -210,6 +246,7 @@ const AddProduct = () => {
                             {errors.weight && <FormFeedback>{errors.weight}</FormFeedback>}
                         </FormGroup>
                     </Col>
+
                     <Col md={6}>
                         <FormGroup>
                             <Label for="pieces">Pieces</Label>
@@ -223,7 +260,22 @@ const AddProduct = () => {
                             {errors.pieces && <FormFeedback>{errors.pieces}</FormFeedback>}
                         </FormGroup>
                     </Col>
+
                     <Col md={6}>
+                        <FormGroup>
+                            <Label for="quantity">Quantity</Label>
+                            <Input
+                                name="quantity"
+                                value={productData.quantity}
+                                onChange={handleChange}
+                                type="text"
+                                invalid={!!errors.quantity}
+                            />
+                            {errors.quantity && <FormFeedback>{errors.quantity}</FormFeedback>}
+                        </FormGroup>
+                    </Col>
+
+                    {/* <Col md={6}>
                         <FormGroup>
                             <Label for="availableQuantity">Available Quantity</Label>
                             <Input
@@ -235,7 +287,34 @@ const AddProduct = () => {
                             />
                             {errors.availableQuantity && <FormFeedback>{errors.availableQuantity}</FormFeedback>}
                         </FormGroup>
+                    </Col> */}
+
+                    <Col md={6}>
+                        <FormGroup>
+                            <Label for="price">Price</Label>
+                            <Input
+                                name="price"
+                                value={productData.price}
+                                onChange={handleChange}
+                                type="number"
+                                invalid={!!errors.price}
+                            />
+                            {errors.price && <FormFeedback>{errors.price}</FormFeedback>}
+                        </FormGroup>
                     </Col>
+
+                    <Col md={6}>
+                        <FormGroup>
+                            <Label for="totalPrice">Total Price</Label>
+                            <Input
+                                name="totalPrice"
+                                value={productData.totalPrice}
+                                disabled
+                                type="number"
+                            />
+                        </FormGroup>
+                    </Col>
+
                     <Col md={12}>
                         <FormGroup>
                             <Label for="description">Description</Label>
@@ -249,6 +328,7 @@ const AddProduct = () => {
                             {errors.description && <FormFeedback>{errors.description}</FormFeedback>}
                         </FormGroup>
                     </Col>
+
                     <Col md={6} className="text-center">
                         <Button type="submit" color="primary" style={{ width: '80%' }} disabled={loading}>
                             {loading ? 'Submitting...' : 'Add Product'}
@@ -256,6 +336,7 @@ const AddProduct = () => {
                     </Col>
                 </Row>
             </form>
+            <ProductList />
             <ToastContainer />
         </div>
     );

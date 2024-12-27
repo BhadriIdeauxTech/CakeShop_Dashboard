@@ -31,7 +31,7 @@ const Login = () => {
 
     const credentials = [
         { email: 'admin@gmail.com', password: 'Admin@123', name: 'Admin', role: 'Administrator', profileImage: '/assets/images/users/Admin.jpg' },
-        { email: 'gopal@gmail.com', password: 'Gopal@123', name: 'Gopal', role: 'User', profileImage: '/assets/images/users/Gopal.jpg' },
+        { email: '@', password: 'Gopal@123', name: 'Gopal', role: 'User', profileImage: '/assets/images/users/Gopal.jpg' },
         { email: 'giftlee@gmail.com', password: 'Giftlee@123', name: 'GiftLee', role: 'Manager', profileImage: '/assets/images/users/GiftLee.jpg' },
     ];
 
@@ -58,7 +58,7 @@ const Login = () => {
         if (user) {
             login();
             sessionStorage.setItem('authUser', JSON.stringify(user));
-            sessionStorage.setItem('sessionExpiration', new Date().getTime() + 60 * 60 * 1000);
+            sessionStorage.setItem('sessionExpiration', new Date().getTime() + 2000 * 60 * 1000);
 
             notification.success({
                 message: 'Login Successful!',
@@ -102,7 +102,7 @@ const Login = () => {
                                         placeholder="Email Address"
                                         value={formData.email}
                                         onChange={handleInputChange}
-                                        autoComplete='off'
+                        
                                     />
                                 </div>
                                 {formErrors.email && <small className="text-danger">{formErrors.email}</small>}
@@ -119,7 +119,7 @@ const Login = () => {
                                         placeholder="Password"
                                         value={formData.password}
                                         onChange={handleInputChange}
-                                        autoComplete='off'
+                              
                                     />
                                 </div>
                                 {formErrors.password && <small className="text-danger">{formErrors.password}</small>}

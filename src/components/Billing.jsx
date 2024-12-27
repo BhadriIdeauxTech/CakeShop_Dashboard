@@ -184,7 +184,7 @@ const Billing = () => {
                             </FormGroup>
                         </div>
                     </Col>
-                    <Col md={6} className="mb-3">
+                    <Col md={4} className="mb-3">
                         <FormGroup>
                             <Label for="quantity">Quantity</Label>
                             <Input
@@ -197,7 +197,7 @@ const Billing = () => {
                             {errors.quantity && <FormFeedback>{errors.quantity}</FormFeedback>}
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="mb-3">
+                    <Col md={4} className="mb-3">
                         <FormGroup>
                             <Label for="weight">Weight</Label>
                             <Input
@@ -215,7 +215,7 @@ const Billing = () => {
                             {errors.weight && <FormFeedback>{errors.weight}</FormFeedback>}
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="mb-3">
+                    <Col md={4} className="mb-3">
                         <FormGroup>
                             <Label for="pieces">Pieces</Label>
                             <Input
@@ -228,7 +228,7 @@ const Billing = () => {
                             {errors.pieces && <FormFeedback>{errors.pieces}</FormFeedback>}
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="mb-3">
+                    <Col md={4} className="mb-3">
                         <FormGroup>
                             <Label for="totalDiscount">Total Discount</Label>
                             <Input
@@ -241,7 +241,7 @@ const Billing = () => {
                             {errors.totalDiscount && <FormFeedback>{errors.totalDiscount}</FormFeedback>}
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="mb-3">
+                    <Col md={4} className="mb-3">
                         <FormGroup>
                             <Label for="totalTax">Total Tax</Label>
                             <Input
@@ -254,7 +254,7 @@ const Billing = () => {
                             {errors.totalTax && <FormFeedback>{errors.totalTax}</FormFeedback>}
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="mb-3">
+                    {/* <Col md={6} className="mb-3">
                         <FormGroup>
                             <Label for="shippingCharges">Shipping Charges</Label>
                             <Input
@@ -266,8 +266,8 @@ const Billing = () => {
                             />
                             {errors.shippingCharges && <FormFeedback>{errors.shippingCharges}</FormFeedback>}
                         </FormGroup>
-                    </Col>
-                    <Col md={6} className="mb-3">
+                    </Col> */}
+                    <Col md={4} className="mb-3">
                         <FormGroup>
                             <Label for="paymentMethod">Payment Method</Label>
                             <Input
@@ -285,7 +285,7 @@ const Billing = () => {
                             {errors.paymentMethod && <FormFeedback>{errors.paymentMethod}</FormFeedback>}
                         </FormGroup>
                     </Col>
-                    <Col md={6} className="mb-3">
+                    {/* <Col md={6} className="mb-3">
                         <FormGroup>
                             <Label for="grandTotal">Grand Total</Label>
                             <Input
@@ -295,7 +295,13 @@ const Billing = () => {
                                 disabled
                             />
                         </FormGroup>
-                    </Col>
+                    </Col> */}
+                      <Col md={6} className="text-center">
+                                            <Button type="submit" color="primary" style={{ width: '80%' }} disabled={loading}>
+                                                {loading ? 'Submitting...' : 'Add Product'}
+                                            </Button>
+                                        </Col>
+                                        
                     <Col md={12} className="d-flex justify-content-center">
                         <Button type="submit" color="primary" disabled={loading}>
                             {loading ? 'Submitting...' : 'Submit'}

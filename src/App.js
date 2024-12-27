@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  Layout, Menu, theme } from 'antd';
+import { Layout, Menu, theme } from 'antd';
 import { NavLink, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './components/Auth/AuthContext';
 import Dashboard from './components/dashboard/Dashboard.jsx';
@@ -9,12 +9,12 @@ import ReturnItems from './components/ReturnItems';
 import RemoveItemTable from './components/RemoveItems.jsx';
 import AddCategory from './components/addItems/AddCategory.jsx';
 import AddSubCategory from './components/addItems/AddSubCategory.jsx';
-
 import Sales from './components/Sales';
 import Login from './components/Login';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import { Navigate } from 'react-router-dom';
 import Header from './components/Header.jsx';
+import Billing from './components/Billing.jsx';
 import './styles/navLeft.css';
 import { BsGraphUp } from "react-icons/bs";
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
@@ -25,10 +25,10 @@ import { BiUndo } from "react-icons/bi";
 import logo from '../src/assets/logo.png'
 import logo2 from '../src/assets/logo-sm.png'
 import { FaTrashAlt } from "react-icons/fa";
-import {TbReportAnalytics } from "react-icons/tb";
+import { TbReportAnalytics } from "react-icons/tb";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { RiAddBoxFill } from "react-icons/ri";
-import Billing from './components/Billing.jsx'
+ 
 const { Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -65,8 +65,8 @@ const items = [
     ),
 
     getItem(
-      <NavLink to="/add-subtype" className={({ isActive }) => (isActive ? 'active-link' : '')}>
-        Add Sub Type
+      <NavLink to="/add-subcategory" className={({ isActive }) => (isActive ? 'active-link' : '')}>
+        Add Sub Category
       </NavLink>,
       '4',
       <IoMdAddCircleOutline />
@@ -107,8 +107,9 @@ const items = [
       Billing
     </NavLink>,
     '9',
-    <Billing />
-  )
+    <IoMdAddCircleOutline /> // Replace with a relevant icon if desired
+  ),
+
 ];
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -127,7 +128,7 @@ const App = () => {
             collapsible
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}
-            style={{ height: '100vh' }} 
+            style={{ height: '100vh' }}
           >
             <div className="demo-logo-vertical" />
             <div className="logoCont px-4 pt-2 pb-0 d-flex justify-content-center">
@@ -139,15 +140,15 @@ const App = () => {
               />
             </div>
             <Menu
-  defaultSelectedKeys={['1']}
-  mode="inline"
-  items={items}
-  className="mt-3 scrollable-menu"  // Add the custom class here
-  style={{
-    height: 'calc(100vh - 80px)',  // Adjust height
-    overflowY: 'auto',  // Enable vertical scroll
-  }}
-/>
+              defaultSelectedKeys={['1']}
+              mode="inline"
+              items={items}
+              className="mt-3 scrollable-menu"
+              style={{
+                height: 'calc(100vh - 80px)',
+                overflowY: 'auto',
+              }}
+            />
 
           </Sider>
         )}
@@ -173,14 +174,14 @@ const App = () => {
                 <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
                 <Route path="/report" element={<ProtectedRoute><Report /></ProtectedRoute>} />
                 <Route path="/add-category" element={<ProtectedRoute><AddCategory /></ProtectedRoute>} />
-                {/* <Route path="/add-type" element={<ProtectedRoute><AddType /></ProtectedRoute>} /> */}
-                <Route path="/add-subtype" element={<ProtectedRoute><AddSubCategory /></ProtectedRoute>} />
+                <Route path="/add-subcategory" element={<ProtectedRoute><AddSubCategory /></ProtectedRoute>} />
                 <Route path="/return-items" element={<ProtectedRoute><ReturnItems /></ProtectedRoute>} />
                 <Route path="/remove-items" element={<ProtectedRoute><RemoveItemTable /></ProtectedRoute>} />
-                <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
                 <Route path="/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
+                <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/login" />} />
               </Routes>
+
             </div>
           </Content>
           {!isLoginPage && (
