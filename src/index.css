@@ -495,3 +495,11 @@ color: #c82333; /* Darker Red */
   background-color: #4b439a !important;
   color: white;
 }
+.ant-layout-sider-children{
+  position: fixed;
+  width: 200px;
+  background-color: white;
+}
+:where(.css-dev-only-do-not-override-5wsri9).ant-menu-light.ant-menu-inline .ant-menu-sub.ant-menu-inline, :where(.css-dev-only-do-not-override-5wsri9).ant-menu-light>.ant-menu.ant-menu-inline .ant-menu-sub.ant-menu-inline {
+  background: rgb(255 255 255) !important;
+}

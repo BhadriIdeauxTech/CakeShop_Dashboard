@@ -3,9 +3,7 @@ import { Row, Col, FormGroup, Label, Input, Button, FormFeedback } from 'reactst
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../styles/addProduct.css';
-import { post } from '../utils/api'; // Import reusable API logic
-import showAlert from '../utils/alerts'; // Import the reusable toast utility
-
+import showAlert from '../utils/alerts';
 import ProductList from './ProductList';
 
 const AddProduct = () => {
@@ -59,22 +57,124 @@ const AddProduct = () => {
         fetchSubCategories();
     }, []);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setProductData({
-            ...productData,
-            [name]: value.trim() // Trim the value before setting it in the state
-        });
-
-        // Calculate totalPrice whenever price or quantity changes
-        if (name === 'price' || name === 'quantity') {
-            const totalPrice = productData.price * productData.quantity;
-            setProductData(prevState => ({
-                ...prevState,
-                totalPrice
-            }));
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setErrors({}); // Reset errors before validation
+    
+        let validationErrors = {};
+        const trimmedQuantity = productData.quantity.trim();
+        const trimmedAvailableQuantity = productData.availableQuantity.trim();
+    
+        // Validation checks
+        if (!productData.productName) validationErrors.productName = 'Product name is required';
+        if (!productData.category) validationErrors.category = 'Category is required';
+        if (!productData.subCategory) validationErrors.subCategory = 'Subcategory is required';
+        if (!trimmedQuantity) validationErrors.quantity = 'Quantity is required';
+        if (!trimmedAvailableQuantity) validationErrors.availableQuantity = 'Available quantity is required';
+        if (!productData.description) validationErrors.description = 'Description is required';
+        if (!productData.weight) validationErrors.weight = 'Weight is required';
+        if (!productData.pieces) validationErrors.pieces = 'Number of pieces is required';
+        if (!productData.price) validationErrors.price = 'Price is required';
+    
+        // Calculate total price directly in handleSubmit to avoid issues with async state updates
+        const totalPrice = parseFloat(productData.price) * parseInt(productData.quantity, 10);
+        if (!totalPrice || isNaN(totalPrice)) validationErrors.totalPrice = 'Total price is required';
+    
+        // Show validation errors if any
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            toast.error('Please fill in all fields!');
+            return;
+        }
+    
+        // Define weightMap
+        const weightMap = {
+            '500g': 500,
+            '1kg': 1000,
+            '2kg': 2000,
+        };
+    
+        const productToAdd = {
+            subcategoryId: productData.subCategory,
+            categoryId: productData.category,
+            productName: productData.productName,
+            price: parseFloat(productData.price),
+            totalPrice: totalPrice, // Ensure totalPrice is passed
+            weight: weightMap[productData.weight] || 0,
+            pieces: parseInt(productData.pieces, 10),
+            description: productData.description,
+            quantityAvailable: parseInt(productData.availableQuantity, 10),
+        };
+    
+        try {
+            const response = await fetch('http://192.168.29.120:8086/product/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(productToAdd),
+            });
+    
+            const textResponse = await response.text();
+            try {
+                const result = JSON.parse(textResponse);
+                console.log('Backend Response:', result);
+                if (response.ok) {
+                    showAlert('success', 'Success', 'Product added successfully!');
+                    setProductData({
+                        productName: '',
+                        category: '',
+                        subCategory: '',
+                        quantity: '',
+                        description: '',
+                        weight: '',
+                        pieces: '',
+                        availableQuantity: '',
+                        price: '',
+                        totalPrice: ''
+                    });
+                } else {
+                    toast.error(result.message || 'Failed to add product');
+                }
+            } catch (parseError) {
+                console.error('Error parsing JSON:', parseError);
+                console.error('Raw Response:', textResponse);
+                toast.error('Server returned an invalid response');
+            }
+    
+        } catch (error) {
+            toast.error('Error submitting product');
+            console.error('Error submitting product:', error);
         }
     };
+    
+
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+    
+        setProductData(prevState => {
+            const updatedData = {
+                ...prevState,
+                [name]: value.trim()
+            };
+    
+            // Recalculate totalPrice if price or quantity changes
+            if (name === 'price' || name === 'quantity') {
+                const price = parseFloat(updatedData.price);
+                const quantity = parseInt(updatedData.quantity, 10);
+                if (!isNaN(price) && !isNaN(quantity)) {
+                    updatedData.totalPrice = price * quantity;
+                } else {
+                    updatedData.totalPrice = '';
+                }
+            }
+    
+            return updatedData;
+        });
+    };
+    
+    
 
     const handleCategoryChange = (e) => {
         const selectedCategory = e.target.value;
@@ -84,88 +184,6 @@ const AddProduct = () => {
     const handleSubCategoryChange = (e) => {
         setProductData({ ...productData, subCategory: e.target.value });
     };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setErrors({}); // Reset errors before validation
-    
-        let validationErrors = {};
-    
-        // Trim the quantity before validating
-        const trimmedQuantity = productData.quantity.trim();
-        const trimmedAvailableQuantity = productData.availableQuantity.trim(); // Ensure availableQuantity is trimmed
-    
-        // Perform validation for each field
-        if (!productData.productName) validationErrors.productName = 'Product name is required';
-        if (!productData.category) validationErrors.category = 'Category is required';
-        if (!productData.subCategory) validationErrors.subCategory = 'Subcategory is required';
-        if (!trimmedQuantity) validationErrors.quantity = 'Quantity is required';  // Trimmed check
-        if (!trimmedAvailableQuantity) validationErrors.availableQuantity = 'Available quantity is required'; // Validation check for availableQuantity
-        if (!productData.description) validationErrors.description = 'Description is required';
-        if (!productData.weight) validationErrors.weight = 'Weight is required';
-        if (!productData.pieces) validationErrors.pieces = 'Number of pieces is required';
-        if (!productData.price) validationErrors.price = 'Price is required'; // Validation for price
-        if (!productData.totalPrice) validationErrors.totalPrice = 'Total price is required'; // Validation for totalPrice
-    
-        // If validation errors exist, update the errors state and show an error message
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            toast.error('Please fill in all fields!');
-            return;
-        }
-    
-        // Prepare the product data to be sent
-        const productToAdd = {
-            subcategoryId: productData.subCategory, // Subcategory selected
-            categoryId: productData.category, // Category selected
-            productName: productData.productName,
-            price: productData.price, // Convert price to number
-            totalPrice:productData.totalPrice, // Convert totalPrice to number
-            weight: productData.weight, // Convert weight to number
-            pieces:productData.pieces, // Convert pieces to number
-            description: productData.description,
-            quantityAvailable: productData.availableQuantity, // Convert availableQuantity to number
-        };
-    
-        try {
-            // Send the data to the backend
-            const response = await fetch('http://192.168.29.120:8086/product/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(productToAdd), // Convert the product data to JSON
-            });
-    
-            const result = await response.json();
-    
-            if (response.ok) {
-                // Show success alert
-                showAlert('success', 'Success', 'Product added successfully!');
-    
-                // Reset form fields
-                setProductData({
-                    productName: '',
-                    category: '',
-                    subCategory: '',
-                    quantity: '',
-                    description: '',
-                    weight: '',
-                    pieces: '',
-                    availableQuantity: '',
-                    price: '', // Reset price
-                    totalPrice: '' // Reset totalPrice
-                });
-            } else {
-                // Handle backend error
-                toast.error(result.message || 'Failed to add product');
-            }
-        } catch (error) {
-            // Handle network or other errors
-            toast.error('Error submitting product');
-        }
-    };
-    
 
     return (
         <div>
@@ -227,7 +245,6 @@ const AddProduct = () => {
                             {errors.subCategory && <FormFeedback>{errors.subCategory}</FormFeedback>}
                         </FormGroup>
                     </Col>
-
                     <Col md={6}>
                         <FormGroup>
                             <Label for="weight">Weight</Label>
@@ -246,7 +263,6 @@ const AddProduct = () => {
                             {errors.weight && <FormFeedback>{errors.weight}</FormFeedback>}
                         </FormGroup>
                     </Col>
-
                     <Col md={6}>
                         <FormGroup>
                             <Label for="pieces">Pieces</Label>
@@ -254,7 +270,7 @@ const AddProduct = () => {
                                 name="pieces"
                                 value={productData.pieces}
                                 onChange={handleChange}
-                                type="text"
+                                type="number"
                                 invalid={!!errors.pieces}
                             />
                             {errors.pieces && <FormFeedback>{errors.pieces}</FormFeedback>}
@@ -268,7 +284,7 @@ const AddProduct = () => {
                                 name="quantity"
                                 value={productData.quantity}
                                 onChange={handleChange}
-                                type="text"
+                                type="number"
                                 invalid={!!errors.quantity}
                             />
                             {errors.quantity && <FormFeedback>{errors.quantity}</FormFeedback>}
@@ -282,7 +298,7 @@ const AddProduct = () => {
                                 name="availableQuantity"
                                 value={productData.availableQuantity}
                                 onChange={handleChange}
-                                type="text"
+                                type="number"
                                 invalid={!!errors.availableQuantity}
                             />
                             {errors.availableQuantity && <FormFeedback>{errors.availableQuantity}</FormFeedback>}
@@ -303,41 +319,41 @@ const AddProduct = () => {
                         </FormGroup>
                     </Col>
 
-                    <Col md={6}>
+                    {/* <Col md={6}>
                         <FormGroup>
                             <Label for="totalPrice">Total Price</Label>
                             <Input
                                 name="totalPrice"
                                 value={productData.totalPrice}
-                                disabled
-                                type="number"
+                                onChange={handleChange}
+                                type="text"
+                                readOnly
                             />
                         </FormGroup>
-                    </Col>
-
-                    <Col md={12}>
+                    </Col> */}
+                    <Col md={6}>   
                         <FormGroup>
                             <Label for="description">Description</Label>
                             <Input
-                                type="textarea"
                                 name="description"
                                 value={productData.description}
                                 onChange={handleChange}
+                                type="text"
                                 invalid={!!errors.description}
                             />
                             {errors.description && <FormFeedback>{errors.description}</FormFeedback>}
                         </FormGroup>
                     </Col>
-
-                    <Col md={6} className="text-center">
-                        <Button type="submit" color="primary" style={{ width: '80%' }} disabled={loading}>
-                            {loading ? 'Submitting...' : 'Add Product'}
+                    <Col md={12}>
+                        <Button type="submit" color="primary" disabled={loading}>
+                            {loading ? 'Adding...' : 'Add Product'}
                         </Button>
                     </Col>
                 </Row>
             </form>
-            <ProductList />
+
             <ToastContainer />
+            <ProductList />
         </div>
     );
 };
